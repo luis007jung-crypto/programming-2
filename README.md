@@ -1,0 +1,47 @@
+# Gestión de habitaciones - Hotel
+
+Pequeña aplicación en Python para registrar, consultar, modificar y eliminar habitaciones.
+
+Instalación
+
+Requiere Python 3.8+ (no hay dependencias externas).
+
+Uso (ejemplos):
+
+- Inicializar la base de datos:
+
+  python main.py init
+
+- Agregar una habitación:
+
+  python main.py add --number 101 --type "Doble" --price 75.0 --available yes --notes "Con vista"
+
+- Listar habitaciones:
+
+  python main.py list
+
+- Ver habitación por número:
+
+  python main.py get --number 101
+
+- Modificar:
+
+  python main.py update --number 101 --price 80.0 --notes "Actualizada"
+
+- Eliminar:
+
+  python main.py delete --number 101
+
+- Cambiar disponibilidad:
+
+  python main.py set-availability --number 101 --available no
+
+- Filtrar por tipo:
+
+  python main.py list-by-type --type "Doble"
+
+Archivos relevantes:
+
+- `db.py`: helper SQLite
+- `models.py`: lógica CRUD
+- `main.py`: CLI
