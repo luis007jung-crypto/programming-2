@@ -1,6 +1,7 @@
 import logging
 import sys
 import argparse
+import random
 from typing import Dict
 
 from Programa_Banco import CuentaMonetaria, TASAS_CAMBIO_USD
@@ -12,16 +13,37 @@ class BancoCLI:
     def __init__(self):
         self.cuentas: Dict[str, CuentaMonetaria] = {}
 
+    def _generar_numero_cuenta(self) -> str:
+        while True:
+            numero = ''.join(str(random.randint(0, 9)) for _ in range(10))
+            if numero not in self.cuentas:
+                return numero
+
+    def _existe_titular_misma_moneda(self, titular: str, moneda: str) -> bool:
+        return any(c.titular == titular and c.moneda == moneda for c in self.cuentas.values())
+
     def crear_cuenta(self):
-        numero = input("Número de cuenta: ").strip()
         titular = input("Titular: ").strip()
         moneda = input(f"Moneda ({', '.join(TASAS_CAMBIO_USD.keys())}): ").strip().upper()
+        if self._existe_titular_misma_moneda(titular, moneda):
+            logger.error(
+                "Ya existe una cuenta para este titular con la misma moneda. "
+                "Use una moneda diferente para registrar otra cuenta. "
+                f"Monedas válidas: {', '.join(TASAS_CAMBIO_USD.keys())}"
+            )
+            return
+
         saldo = input("Saldo inicial (número): ").strip()
         try:
             saldo_val = float(saldo) if saldo else 0.0
+            numero = self._generar_numero_cuenta()
             cuenta = CuentaMonetaria(numero, titular, moneda, saldo_val)
             self.cuentas[cuenta.numero_cuenta] = cuenta
-            logger.info(f"Cuenta creada: {cuenta.numero_cuenta} - {cuenta.titular} ({cuenta.moneda}) Saldo: {cuenta.saldo}")
+            logger.info("Cuenta creada correctamente. Detalles:")
+            logger.info(f"  Número de cuenta: {cuenta.numero_cuenta}")
+            logger.info(f"  Titular: {cuenta.titular}")
+            logger.info(f"  Tipo de moneda: {cuenta.moneda}")
+            logger.info(f"  Saldo inicial: {cuenta.saldo}")
         except Exception as e:
             logger.error(f"Error al crear cuenta: {e}")
 
